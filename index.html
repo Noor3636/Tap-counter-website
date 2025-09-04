@@ -1,670 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tap Counter - Free Online Counter Tool</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tap Counter - Free Online Counter Tool</title>
+<style>
+  /* ===== Your existing CSS ===== */
+  * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;}
+  body {background:linear-gradient(135deg,#6e8efb,#a777e3); min-height:100vh; display:flex; flex-direction:column; align-items:center; color:#333;}
+  header {width:100%; background-color:rgba(255,255,255,0.95); box-shadow:0 2px 10px rgba(0,0,0,0.1); padding:15px 5%; display:flex; justify-content:space-between; align-items:center;}
+  .logo {font-size:1.8rem; font-weight:bold; color:#6e8efb;}
+  .logo span {color:#a777e3;}
+  nav a {margin-left:20px; text-decoration:none; color:#666; font-weight:500;}
+  nav a:hover {color:#6e8efb;}
+  .container {background-color:rgba(255,255,255,0.9); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.15); width:100%; max-width:500px; padding:30px; text-align:center; margin:30px 0;}
+  h1 {color:#6e8efb; margin-bottom:20px; font-size:2.5rem;}
+  .description {color:#666; margin-bottom:30px; font-size:1.1rem; line-height:1.5;}
+  .counter-display {font-size:5rem; font-weight:bold; color:#6e8efb; margin:20px 0; text-shadow:2px 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;}
+  .counter-display.animated {transform: scale(1.1); color:#a777e3;}
+  .tap-area {background:linear-gradient(135deg,#6e8efb,#a777e3); height:300px; border-radius:15px; display:flex; align-items:center; justify-content:center; margin:20px 0; cursor:pointer; user-select:none; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.1s ease; overflow:hidden; position:relative;}
+  .tap-area:active {transform:scale(0.98);}
+  .tap-text {color:white; font-size:1.5rem; font-weight:500; z-index:2;}
+  .ripple {position:absolute; border-radius:50%; background-color:rgba(255,255,255,0.4); transform:scale(0); animation:ripple 0.6s linear; z-index:1;}
+  @keyframes ripple {to {transform:scale(2.5); opacity:0;}}
+  .buttons {display:flex; justify-content:space-between; gap:10px; margin:20px 0;}
+  button {flex:1; padding:12px 20px; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s ease;}
+  .reset-btn {background-color:#ff6b6b; color:white;}
+  .reset-btn:hover {background-color:#ff5252;}
+  .save-btn {background-color:#4cd964; color:white;}
+  .save-btn:hover {background-color:#3ac453;}
+  .subtract-btn {background-color:#ff9500; color:white;}
+  .subtract-btn:hover {background-color:#e68500;}
+  .stats {display:flex; justify-content:space-between; margin-top:20px; padding-top:20px; border-top:1px solid #eee;}
+  .stat-box {flex:1; padding:10px;}
+  .stat-value {font-size:1.5rem; font-weight:bold; color:#6e8efb;}
+  .stat-label {font-size:0.9rem; color:#666;}
+  .saved-counts {margin-top:30px; text-align:left;}
+  .saved-counts h3 {color:#6e8efb; margin-bottom:10px;}
+  #saved-list {list-style-type:none; max-height:150px; overflow-y:auto;}
+  #saved-list li {padding:8px 10px; background-color:#f8f9fa; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;}
+  .delete-btn {color:#ff6b6b; cursor:pointer; font-weight:bold;}
+  .ad-container {width:100%; max-width:500px; background:white; border-radius:10px; padding:15px; margin:20px 0; text-align:center;}
+  .ad-placeholder {background:#f1f3f4; padding:20px; border-radius:8px; color:#666;}
+  footer {width:100%; background-color:rgba(255,255,255,0.95); padding:20px 5%; text-align:center; margin-top:40px;}
+  @media (max-width:600px){.container{padding:20px;} h1{font-size:2rem;} .counter-display{font-size:4rem;} .tap-area{height:250px;} .buttons{flex-direction:column;} header{flex-direction:column;text-align:center;} nav{margin-top:15px;} nav a{margin:0 10px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Tap<span>Counter</span></div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Features</a>
+    <a href="#">Tips</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
 
-      body {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: #333;
-      }
+<div class="container">
+  <h1>Tap Counter</h1>
+  <p class="description">Tap the area below or press Spacebar to count. Keep track of anything that needs counting!</p>
 
-      header {
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 15px 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+  <div class="counter-display" id="counter">0</div>
 
-      .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #6e8efb;
-      }
+  <div class="tap-area" id="tapArea">
+    <span class="tap-text">Tap Here</span>
+  </div>
 
-      .logo span {
-        color: #a777e3;
-      }
+  <div class="buttons">
+    <button class="subtract-btn" id="subtractBtn">Subtract</button>
+    <button class="reset-btn" id="resetBtn">Reset</button>
+    <button class="save-btn" id="saveBtn">Save</button>
+  </div>
 
-      nav a {
-        margin-left: 20px;
-        text-decoration: none;
-        color: #666;
-        font-weight: 500;
-      }
-
-      nav a:hover {
-        color: #6e8efb;
-      }
-
-      .container {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        width: 100%;
-        max-width: 500px;
-        padding: 30px;
-        text-align: center;
-        margin: 30px 0;
-      }
-
-      h1 {
-        color: #6e8efb;
-        margin-bottom: 20px;
-        font-size: 2.5rem;
-      }
-
-      .description {
-        color: #666;
-        margin-bottom: 30px;
-        font-size: 1.1rem;
-        line-height: 1.5;
-      }
-
-      .counter-display {
-        font-size: 5rem;
-        font-weight: bold;
-        color: #6e8efb;
-        margin: 20px 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.2s ease;
-      }
-
-      .counter-display.animated {
-        transform: scale(1.1);
-        color: #a777e3;
-      }
-
-      .tap-area {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        height: 300px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 20px 0;
-        cursor: pointer;
-        user-select: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.1s ease;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .tap-area:active {
-        transform: scale(0.98);
-      }
-
-      .tap-text {
-        color: white;
-        font-size: 1.5rem;
-        font-weight: 500;
-        z-index: 2;
-      }
-
-      .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.4);
-        transform: scale(0);
-        animation: ripple 0.6s linear;
-        z-index: 1;
-      }
-
-      @keyframes ripple {
-        to {
-          transform: scale(2.5);
-          opacity: 0;
-        }
-      }
-
-      .buttons {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        margin: 20px 0;
-      }
-
-      button {
-        flex: 1;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .reset-btn {
-        background-color: #ff6b6b;
-        color: white;
-      }
-
-      .reset-btn:hover {
-        background-color: #ff5252;
-      }
-
-      .save-btn {
-        background-color: #4cd964;
-        color: white;
-      }
-
-      .save-btn:hover {
-        background-color: #3ac453;
-      }
-
-      .subtract-btn {
-        background-color: #ff9500;
-        color: white;
-      }
-
-      .subtract-btn:hover {
-        background-color: #e68500;
-      }
-
-      .stats {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-      }
-
-      .stat-box {
-        flex: 1;
-        padding: 10px;
-      }
-
-      .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #6e8efb;
-      }
-
-      .stat-label {
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .saved-counts {
-        margin-top: 30px;
-        text-align: left;
-      }
-
-      .saved-counts h3 {
-        color: #6e8efb;
-        margin-bottom: 10px;
-      }
-
-      #saved-list {
-        list-style-type: none;
-        max-height: 150px;
-        overflow-y: auto;
-      }
-
-      #saved-list li {
-        padding: 8px 10px;
-        background-color: #f8f9fa;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .delete-btn {
-        color: #ff6b6b;
-        cursor: pointer;
-        font-weight: bold;
-      }
-
-      .ad-container {
-        width: 100%;
-        max-width: 500px;
-        background: white;
-        border-radius: 10px;
-        padding: 15px;
-        margin: 20px 0;
-        text-align: center;
-      }
-
-      .ad-placeholder {
-        background: #f1f3f4;
-        padding: 20px;
-        border-radius: 8px;
-        color: #666;
-      }
-
-      /* .monetization-info {
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        margin: 20px 0;
-        width: 100%;
-        max-width: 800px;
-      } */
-
-      /* .monetization-info h2 {
-        color: #6e8efb;
-        margin-bottom: 20px;
-        text-align: center;
-      } */
-
-      .info-cards {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-      }
-
-      .info-card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        flex: 1;
-        min-width: 250px;
-        max-width: 380px;
-      }
-
-      .info-card h3 {
-        color: #a777e3;
-        margin-bottom: 15px;
-      }
-
-      .info-card ul {
-        list-style-position: inside;
-        padding: 10px;
-      }
-
-      .info-card li {
-        margin-bottom: 8px;
-      }
-
-      footer {
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 20px 5%;
-        text-align: center;
-        margin-top: 40px;
-      }
-
-      @media (max-width: 600px) {
-        .container {
-          padding: 20px;
-        }
-
-        h1 {
-          font-size: 2rem;
-        }
-
-        .counter-display {
-          font-size: 4rem;
-        }
-
-        .tap-area {
-          height: 250px;
-        }
-
-        .buttons {
-          flex-direction: column;
-        }
-
-        header {
-          flex-direction: column;
-          text-align: center;
-        }
-
-        nav {
-          margin-top: 15px;
-        }
-
-        nav a {
-          margin: 0 10px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="logo">Tap<span>Counter</span></div>
-      <nav>
-        <a href="#">Home</a>
-        <a href="#">Features</a>
-        <a href="#">Tips</a>
-        <a href="#">Contact</a>
-      </nav>
-    </header>
-
-    <div class="container">
-      <h1>Tap Counter</h1>
-      <p class="description">
-        Tap the area below or press Spacebar to count. Keep track of anything
-        that needs counting!
-      </p>
-
-      <div class="counter-display" id="counter">0</div>
-
-      <div class="tap-area" id="tapArea">
-        <span class="tap-text">Tap Here</span>
-      </div>
-
-      <div class="buttons">
-        <button class="subtract-btn" id="subtractBtn">Subtract</button>
-        <button class="reset-btn" id="resetBtn">Reset</button>
-        <button class="save-btn" id="saveBtn">Save</button>
-      </div>
-
-      <div class="stats">
-        <div class="stat-box">
-          <div class="stat-value" id="tapRate">0</div>
-          <div class="stat-label">Taps/Second</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value" id="maxCount">0</div>
-          <div class="stat-label">Max Count</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value" id="totalTaps">0</div>
-          <div class="stat-label">Total Taps</div>
-        </div>
-      </div>
-
-      <div class="saved-counts">
-        <h3>Saved Counts</h3>
-        <ul id="saved-list"></ul>
-      </div>
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-value" id="tapRate">0</div>
+      <div class="stat-label">Taps/Second</div>
     </div>
-
-    <div class="ad-container">
-      <div class="ad-placeholder">
-        Advertisement Space<br />
-      </div>
+    <div class="stat-box">
+      <div class="stat-value" id="maxCount">0</div>
+      <div class="stat-label">Max Count</div>
     </div>
+    <div class="stat-box">
+      <div class="stat-value" id="totalTaps">0</div>
+      <div class="stat-label">Total Taps</div>
+    </div>
+  </div>
 
-    <!-- <div class="monetization-info">
-      <h2>How to Host for Free and Monetize This Website</h2>
-      <div class="info-cards">
-        <div class="info-card">
-          <h3>Free Hosting Options</h3>
-          <ul>
-            <li>
-              <strong>GitHub Pages</strong>: Free hosting for static websites
-            </li>
-            <li>
-              <strong>Google Firebase Hosting</strong>: Free tier with generous
-              limits
-            </li>
-            <li>
-              <strong>Netlify</strong>: Free continuous deployment from Git
-              repositories
-            </li>
-            <li>
-              <strong>Vercel</strong>: Free hosting for static sites with CDN
-            </li>
-            <li>
-              <strong>Google Cloud Storage</strong>: Host static websites with
-              free tier
-            </li>
-          </ul>
-        </div>
+  <div class="saved-counts">
+    <h3>Saved Counts</h3>
+    <ul id="saved-list"></ul>
+  </div>
+</div>
 
-        <div class="info-card">
-          <h3>Monetization Strategies</h3>
-          <ul>
-            <li><strong>Google AdSense</strong>: Display targeted ads</li>
-            <li>
-              <strong>Affiliate Marketing</strong>: Promote related products
-            </li>
-            <li>
-              <strong>Premium Features</strong>: Offer advanced features for a
-              fee
-            </li>
-            <li>
-              <strong>Donations</strong>: Add a donation button for user support
-            </li>
-            <li><strong>Sponsorships</strong>: Partner with relevant brands</li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
+<div class="ad-container">
+  <div class="ad-placeholder">
+    Advertisement Space
+  </div>
+</div>
 
-    <footer>
-      <p>
-        © 2025 TapCounter.com | Crafted by Arfath Malik | <a href="#">Privacy Policy</a> |
-        <a href="#">Terms of Service</a>
-      </p>
-    </footer>
+<footer>
+  <p>© 2025 TapCounter.com | Crafted by Arfath Malik | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Elements
-        const counterDisplay = document.getElementById("counter");
-        const tapArea = document.getElementById("tapArea");
-        const resetBtn = document.getElementById("resetBtn");
-        const saveBtn = document.getElementById("saveBtn");
-        const subtractBtn = document.getElementById("subtractBtn");
-        const tapRateEl = document.getElementById("tapRate");
-        const maxCountEl = document.getElementById("maxCount");
-        const totalTapsEl = document.getElementById("totalTaps");
-        const savedList = document.getElementById("saved-list");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const counterDisplay = document.getElementById("counter");
+  const tapArea = document.getElementById("tapArea");
+  const resetBtn = document.getElementById("resetBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const subtractBtn = document.getElementById("subtractBtn");
+  const tapRateEl = document.getElementById("tapRate");
+  const maxCountEl = document.getElementById("maxCount");
+  const totalTapsEl = document.getElementById("totalTaps");
+  const savedList = document.getElementById("saved-list");
 
-        // Counter state
-        let count = 0;
-        let maxCount = 0;
-        let totalTaps = 0;
-        let lastTapTime = Date.now();
-        let tapIntervals = [];
-        let tapRate = 0;
+  let count = 0, maxCount = 0, totalTaps = 0;
+  let lastTapTime = Date.now();
+  let tapIntervals = [];
+  let tapRate = 0;
+  let consecutiveResets = 0; // track consecutive resets
 
-        // Load saved data from localStorage
-        if (localStorage.getItem("tapCounterData")) {
-          const data = JSON.parse(localStorage.getItem("tapCounterData"));
-          count = data.count || 0;
-          maxCount = data.maxCount || 0;
-          totalTaps = data.totalTaps || 0;
-          updateDisplay();
-        }
+  if (localStorage.getItem("tapCounterData")) {
+    const data = JSON.parse(localStorage.getItem("tapCounterData"));
+    count = data.count || 0;
+    maxCount = data.maxCount || 0;
+    totalTaps = data.totalTaps || 0;
+    updateDisplay();
+  }
 
-        // Load saved counts
-        loadSavedCounts();
+  loadSavedCounts();
 
-        // Tap function
-        function increment() {
-          count++;
-          totalTaps++;
+  function increment() {
+    count++; totalTaps++; consecutiveResets = 0;
+    const now = Date.now();
+    const interval = now - lastTapTime;
+    lastTapTime = now;
+    if (interval < 1000) {
+      tapIntervals.push(interval);
+      if (tapIntervals.length>5) tapIntervals.shift();
+      const avgInterval = tapIntervals.reduce((a,b)=>a+b,0)/tapIntervals.length;
+      tapRate = avgInterval>0?Math.round(1000/avgInterval):0;
+    }
+    if(count>maxCount) maxCount=count;
+    updateDisplay(); animateCounter(); saveData();
+  }
 
-          // Calculate tap rate (taps per second)
-          const now = Date.now();
-          const interval = now - lastTapTime;
-          lastTapTime = now;
+  function decrement() { if(count>0){count--; totalTaps++; updateDisplay(); saveData();} }
 
-          if (interval < 1000) {
-            // Only count intervals less than 1 second
-            tapIntervals.push(interval);
-            if (tapIntervals.length > 5) {
-              // Keep last 5 intervals
-              tapIntervals.shift();
-            }
+  function resetCounter() {
+    count=0; tapIntervals=[]; tapRate=0;
+    consecutiveResets++;
+    if(consecutiveResets>=5){
+      totalTaps=0;
+      localStorage.removeItem("tapCounterData");
+      consecutiveResets=0;
+    }
+    updateDisplay(); saveData();
+  }
 
-            const avgInterval =
-              tapIntervals.reduce((a, b) => a + b, 0) / tapIntervals.length;
-            tapRate = avgInterval > 0 ? Math.round(1000 / avgInterval) : 0;
-          }
+  function saveCount() {
+    if(count===0) return;
+    const timestamp = new Date().toLocaleString();
+    const savedCounts = JSON.parse(localStorage.getItem("savedCounts")||"[]");
+    savedCounts.push({count:count, timestamp:timestamp});
+    localStorage.setItem("savedCounts",JSON.stringify(savedCounts));
+    loadSavedCounts();
+  }
 
-          // Update max count
-          if (count > maxCount) {
-            maxCount = count;
-          }
+  function loadSavedCounts() {
+    const savedCounts = JSON.parse(localStorage.getItem("savedCounts")||"[]");
+    savedList.innerHTML="";
+    savedCounts.forEach((item,index)=>{
+      const li=document.createElement("li");
+      li.innerHTML=`<span>${item.count} (${item.timestamp})</span><span class="delete-btn" data-index="${index}">×</span>`;
+      savedList.appendChild(li);
+    });
+    document.querySelectorAll(".delete-btn").forEach(btn=>{
+      btn.addEventListener("click", function(){deleteSavedCount(parseInt(this.getAttribute("data-index")));});
+    });
+  }
 
-          updateDisplay();
-          animateCounter();
-          saveData();
-        }
+  function deleteSavedCount(index){
+    const savedCounts = JSON.parse(localStorage.getItem("savedCounts")||"[]");
+    savedCounts.splice(index,1);
+    localStorage.setItem("savedCounts",JSON.stringify(savedCounts));
+    loadSavedCounts();
+  }
 
-        // Subtract function
-        function decrement() {
-          if (count > 0) {
-            count--;
-            totalTaps++;
-            updateDisplay();
-            saveData();
-          }
-        }
+  function updateDisplay(){
+    counterDisplay.textContent=count;
+    tapRateEl.textContent=tapRate;
+    maxCountEl.textContent=maxCount;
+    totalTapsEl.textContent=totalTaps;
+  }
 
-        // Reset function
-        function resetCounter() {
-          count = 0;
-          tapIntervals = [];
-          tapRate = 0;
-          updateDisplay();
-          saveData();
-        }
+  function animateCounter(){counterDisplay.classList.add("animated"); setTimeout(()=>counterDisplay.classList.remove("animated"),200);}
 
-        // Save current count
-        function saveCount() {
-          if (count === 0) return;
+  function createRipple(event){
+    const circle=document.createElement("span");
+    const diameter=Math.max(tapArea.clientWidth,tapArea.clientHeight);
+    const radius=diameter/2;
+    circle.style.width=circle.style.height=`${diameter}px`;
+    circle.style.left=`${event.clientX-tapArea.offsetLeft-radius}px`;
+    circle.style.top=`${event.clientY-tapArea.offsetTop-radius}px`;
+    circle.classList.add("ripple");
+    const ripple = tapArea.getElementsByClassName("ripple")[0]; if(ripple) ripple.remove();
+    tapArea.appendChild(circle);
+  }
 
-          const timestamp = new Date().toLocaleString();
-          const savedCounts = JSON.parse(
-            localStorage.getItem("savedCounts") || "[]"
-          );
+  function saveData(){
+    const data={count:count,maxCount:maxCount,totalTaps:totalTaps};
+    localStorage.setItem("tapCounterData",JSON.stringify(data));
+  }
 
-          savedCounts.push({
-            count: count,
-            timestamp: timestamp,
-          });
+  tapArea.addEventListener("click", e=>{increment(); createRipple(e);});
+  subtractBtn.addEventListener("click", decrement);
+  resetBtn.addEventListener("click", resetCounter);
+  saveBtn.addEventListener("click", saveCount);
 
-          localStorage.setItem("savedCounts", JSON.stringify(savedCounts));
-          loadSavedCounts();
-        }
+  document.addEventListener("keydown", e=>{
+    if(e.code==="Space"){e.preventDefault(); increment();
+      const simulatedEvent={clientX:tapArea.offsetLeft+tapArea.offsetWidth/2, clientY:tapArea.offsetTop+tapArea.offsetHeight/2};
+      createRipple(simulatedEvent);
+    }
+  });
 
-        // Load saved counts
-        function loadSavedCounts() {
-          const savedCounts = JSON.parse(
-            localStorage.getItem("savedCounts") || "[]"
-          );
-          savedList.innerHTML = "";
-
-          savedCounts.forEach((item, index) => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-                        <span>${item.count} (${item.timestamp})</span>
-                        <span class="delete-btn" data-index="${index}">×</span>
-                    `;
-            savedList.appendChild(li);
-          });
-
-          // Add event listeners to delete buttons
-          document.querySelectorAll(".delete-btn").forEach((btn) => {
-            btn.addEventListener("click", function () {
-              const index = parseInt(this.getAttribute("data-index"));
-              deleteSavedCount(index);
-            });
-          });
-        }
-
-        // Delete saved count
-        function deleteSavedCount(index) {
-          const savedCounts = JSON.parse(
-            localStorage.getItem("savedCounts") || "[]"
-          );
-          savedCounts.splice(index, 1);
-          localStorage.setItem("savedCounts", JSON.stringify(savedCounts));
-          loadSavedCounts();
-        }
-
-        // Update display
-        function updateDisplay() {
-          counterDisplay.textContent = count;
-          tapRateEl.textContent = tapRate;
-          maxCountEl.textContent = maxCount;
-          totalTapsEl.textContent = totalTaps;
-        }
-
-        // Animate counter
-        function animateCounter() {
-          counterDisplay.classList.add("animated");
-          setTimeout(() => {
-            counterDisplay.classList.remove("animated");
-          }, 200);
-        }
-
-        // Create ripple effect
-        function createRipple(event) {
-          const circle = document.createElement("span");
-          const diameter = Math.max(tapArea.clientWidth, tapArea.clientHeight);
-          const radius = diameter / 2;
-
-          circle.style.width = circle.style.height = `${diameter}px`;
-          circle.style.left = `${
-            event.clientX - tapArea.offsetLeft - radius
-          }px`;
-          circle.style.top = `${event.clientY - tapArea.offsetTop - radius}px`;
-
-          circle.classList.add("ripple");
-
-          // Remove existing ripples
-          const ripple = tapArea.getElementsByClassName("ripple")[0];
-          if (ripple) {
-            ripple.remove();
-          }
-
-          tapArea.appendChild(circle);
-        }
-
-        // Save data to localStorage
-        function saveData() {
-          const data = {
-            count: count,
-            maxCount: maxCount,
-            totalTaps: totalTaps,
-          };
-          localStorage.setItem("tapCounterData", JSON.stringify(data));
-        }
-
-        // Event listeners
-        tapArea.addEventListener("click", function (e) {
-          increment();
-          createRipple(e);
-        });
-
-        subtractBtn.addEventListener("click", decrement);
-        resetBtn.addEventListener("click", resetCounter);
-        saveBtn.addEventListener("click", saveCount);
-
-        // Keyboard support
-        document.addEventListener("keydown", function (e) {
-          if (e.code === "Space") {
-            e.preventDefault();
-            increment();
-
-            // Simulate ripple effect at center for spacebar
-            const simulatedEvent = {
-              clientX: tapArea.offsetLeft + tapArea.offsetWidth / 2,
-              clientY: tapArea.offsetTop + tapArea.offsetHeight / 2,
-            };
-            createRipple(simulatedEvent);
-          }
-        });
-
-        // Initialize display
-        updateDisplay();
-      });
-    </script>
-  </body>
-</html>
+  updateDisplay();
+});
+</script>
