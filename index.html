@@ -21,7 +21,7 @@
   .tap-area {background:linear-gradient(135deg,#6e8efb,#a777e3); height:300px; border-radius:15px; display:flex; align-items:center; justify-content:center; margin:20px 0; cursor:pointer; user-select:none; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.1s ease; overflow:hidden; position:relative;}
   .tap-area:active {transform:scale(0.98);}
   .tap-text {color:white; font-size:1.5rem; font-weight:500; z-index:2;}
-  .ripple {position:absolute; border-radius:50%; background-color:rgba(255,255,255,0.4); transform:scale(0); animation:ripple 0.6s linear; z-index:1;}
+  .ripple {position:absolute; border-radius:50%; background-color:rgba(255, 255, 255, 0.4); transform:scale(0); animation:ripple 0.6s linear; z-index:1;}
   @keyframes ripple {to {transform:scale(2.5); opacity:0;}}
   .buttons {display:flex; justify-content:space-between; gap:10px; margin:20px 0;}
   button {flex:1; padding:12px 20px; border:none; border-radius:8px; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s ease;}
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let lastTapTime = Date.now();
   let tapIntervals = [];
   let tapRate = 0;
-  let consecutiveResets = 0; // track consecutive resets
+  let consecutiveResets = 0;
 
   if (localStorage.getItem("tapCounterData")) {
     const data = JSON.parse(localStorage.getItem("tapCounterData"));
@@ -133,7 +133,9 @@ document.addEventListener("DOMContentLoaded", function () {
   loadSavedCounts();
 
   function increment() {
-    count++; totalTaps++; consecutiveResets = 0;
+    count++;
+    totalTaps++;
+    consecutiveResets = 0;
     const now = Date.now();
     const interval = now - lastTapTime;
     lastTapTime = now;
@@ -150,13 +152,18 @@ document.addEventListener("DOMContentLoaded", function () {
   function decrement() { if(count>0){count--; totalTaps++; updateDisplay(); saveData();} }
 
   function resetCounter() {
-    count=0; tapIntervals=[]; tapRate=0;
+    count = 0;
+    tapIntervals = [];
+    tapRate = 0;
     consecutiveResets++;
-    if(consecutiveResets>=5){
-      totalTaps=0;
-      localStorage.removeItem("tapCounterData");
-      consecutiveResets=0;
+
+    if (consecutiveResets >= 3) {
+        totalTaps = 0;
+        maxCount = 0;  // also reset maxCount
+        localStorage.removeItem("tapCounterData");
+        consecutiveResets = 0;
     }
+
     updateDisplay(); saveData();
   }
 
@@ -230,3 +237,5 @@ document.addEventListener("DOMContentLoaded", function () {
   updateDisplay();
 });
 </script>
+</body>
+</html>
